@@ -1,7 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
-import { currentUserRouter } from './routes/current-user';
+import { currentUserRouter } from './routes/users/current-user';
 import { postsRouter } from './routes/posts';
 import { projectsRouter } from './routes/projects';
 import {
@@ -9,9 +9,9 @@ import {
   errorHandler,
   currentUser,
 } from '@rogatis.eti.br/common';
-import { signinRouter } from './routes/signin';
-import { signoutRouter } from './routes/signout';
-import { signupRouter } from './routes/signup';
+import { signinRouter } from './routes/users/signin';
+import { signoutRouter } from './routes/users/signout';
+import { signupRouter } from './routes/users/signup';
 import cookieSession from 'cookie-session';
 
 const app = express();

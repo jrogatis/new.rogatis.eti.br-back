@@ -4,34 +4,34 @@ import {
   validateRequest,
   requireAuth,
 } from '@rogatis.eti.br/common';
-
-import { Posts } from '../models/posts';
+import { Projects } from '../../models/projects';
 
 const router = express.Router();
 
 router.get(
-  '/api/posts',
+  '/api/projects',
   requireAuth,
   [],
   validateRequest,
   async (req: Request, res: Response) => {
-    const posts = await Posts.find();
-    res.send(posts);
+    const projects = await Projects.find();
+    res.send(projects);
   },
 );
+
 router.get(
-  '/api/posts/:id',
+  '/api/projects/:id',
   requireAuth,
   [],
   validateRequest,
   async (req: Request, res: Response) => {
     try {
-      const post = await Posts.findById(req.params.id);
-      res.send(post);
+      const project = await Projects.findById(req.params.id);
+      res.send(project);
     } catch (err) {
-      throw new BadRequestError('I cant find this post id');
+      throw new BadRequestError('I cant find this project id');
     }
   },
 );
 
-export { router as postsRouter };
+export { router as projectsRouter };
