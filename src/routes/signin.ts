@@ -4,8 +4,7 @@ import jwt from 'jsonwebtoken';
 
 import { Password } from '../services/password';
 import { User } from '../models/users';
-import { BadRequestError } from '../errors/bad-request-error';
-import { validateRequest } from '../middlewares/validate-request';
+import { BadRequestError, validateRequest } from '@rogatis.eti.br/common';
 
 const router = express.Router();
 
@@ -41,6 +40,8 @@ router.post(
         id: existingUser.id,
         email: existingUser.email,
       },
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       process.env.JWT_KEY!,
     );
 
@@ -48,7 +49,6 @@ router.post(
     req.session = {
       jwt: userJwt,
     };
-
     res.status(200).send(existingUser);
   },
 );

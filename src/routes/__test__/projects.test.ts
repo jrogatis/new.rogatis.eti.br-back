@@ -29,20 +29,27 @@ it('return a list of all posts', async () => {
     await project.save();
   }
 
-  const result = await request(app).get('/api/projects');
+  const result = await request(app)
+    .get('/api/projects')
+    .set('Cookie', global.signin());
   return expect(result.body.length).toBe(3);
 });
 
 it('return especific project', async () => {
   const project = projectToBuild();
   await project.save();
-  const result = await request(app).get(`/api/projects/${project._id}`);
+  const result = await request(app)
+    .get(`/api/projects/${project._id}`)
+    .set('Cookie', global.signin());
   return expect(result.body.id.toString()).toEqual(project._id.toString());
 });
 
 it('return 422 when especific project its not found', async () => {
   const project = projectToBuild();
   await project.save();
-  const result = await request(app).get(`/api/projects/${1}`).expect(400);
+  const result = await request(app)
+    .get(`/api/projects/${1}`)
+    .set('Cookie', global.signin())
+    .expect(400);
   expect(result.body.errors[0].message).toEqual('I cant find this project id');
 });

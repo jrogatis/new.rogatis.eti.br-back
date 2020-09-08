@@ -1,14 +1,16 @@
 import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
-import { BadRequestError } from '../errors/bad-request-error';
-import { validateRequest } from '../middlewares/validate-request';
-import { NotFoundError } from '../errors/not-found-error';
+import {
+  BadRequestError,
+  validateRequest,
+  requireAuth,
+} from '@rogatis.eti.br/common';
 import { Projects } from '../models/projects';
 
 const router = express.Router();
 
 router.get(
   '/api/projects',
+  requireAuth,
   [],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -19,6 +21,7 @@ router.get(
 
 router.get(
   '/api/projects/:id',
+  requireAuth,
   [],
   validateRequest,
   async (req: Request, res: Response) => {

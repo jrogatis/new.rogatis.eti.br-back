@@ -27,20 +27,28 @@ it('return a list of all posts', async () => {
     const post = postBuild();
     await post.save();
   }
-  const result = await request(app).get('/api/posts');
+  const result = await request(app)
+    .get('/api/posts')
+    .set('Cookie', global.signin());
+
   return expect(result.body.length).toBe(3);
 });
 
 it('return especific post', async () => {
   const post = postBuild();
   await post.save();
-  const result = await request(app).get(`/api/posts/${post._id}`);
+  const result = await request(app)
+    .get(`/api/posts/${post._id}`)
+    .set('Cookie', global.signin());
   return expect(result.body.id.toString()).toEqual(post._id.toString());
 });
 
 it('return 422 when especific post its not found', async () => {
   const post = postBuild();
   await post.save();
-  const result = await request(app).get(`/api/posts/${1}`).expect(400);
+  const result = await request(app)
+    .get(`/api/posts/${1}`)
+    .set('Cookie', global.signin())
+    .expect(400);
   expect(result.body.errors[0].message).toEqual('I cant find this post id');
 });

@@ -14,13 +14,14 @@ it('return a 201 on sucessful signup', async () => {
 });
 
 it('returns a 400 with a invalid email', async () => {
-  return request(app)
+  const result = await request(app)
     .post('/api/users/signup')
     .send({
       email: 'test.com',
       password: 'password',
     })
     .expect(400);
+  return result;
 });
 
 it('returns a 400 with a invalid password', async () => {
