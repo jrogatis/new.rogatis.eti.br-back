@@ -28,28 +28,29 @@ it('return a list of all posts', async () => {
     const project = projectToBuild();
     await project.save();
   }
-
-  const result = await request(app)
-    .get('/api/projects')
-    .set('Cookie', global.signin());
+  const result = await request(app).get('/api/projects');
   return expect(result.body.length).toBe(3);
 });
 
 it('return especific project', async () => {
   const project = projectToBuild();
   await project.save();
-  const result = await request(app)
-    .get(`/api/projects/${project._id}`)
-    .set('Cookie', global.signin());
+  const result = await request(app).get(`/api/projects/${project._id}`);
   return expect(result.body.id.toString()).toEqual(project._id.toString());
 });
 
-it('return 422 when especific project its not found', async () => {
+it('return 404 when especific project id its not found', async () => {
   const project = projectToBuild();
   await project.save();
-  const result = await request(app)
-    .get(`/api/projects/${1}`)
+  await request(app).get(`/api/projects/580a80d2dcba0f490c7298b4`).expect(404);
+});
+
+it('creates a project and return it with 201', async () => {
+  const project = projectToBuild().toJSON();
+
+  await request(app)
+    .post(`/api/projects`)
     .set('Cookie', global.signin())
-    .expect(400);
-  expect(result.body.errors[0].message).toEqual('I cant find this project id');
+    .send({ ...project })
+    .expect(201);
 });
