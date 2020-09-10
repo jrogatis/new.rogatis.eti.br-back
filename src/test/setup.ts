@@ -15,6 +15,7 @@ let mongo: any;
 beforeAll(async () => {
   process.env.JWT_KEY = 'asdfasdf';
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  process.env.SECRETS_SESSIONS = 'rogatis-eti-br-secret';
 
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();

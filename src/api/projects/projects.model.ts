@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-interface ProjectsModel extends mongoose.Model<ProjectsDoc> {
-  build(attrs: ProjectsAttrs): ProjectsDoc;
+interface ProjectModel extends mongoose.Model<ProjectDoc> {
+  build(attrs: ProjectAttrs): ProjectDoc;
 }
 
 const ImagesSchema = new mongoose.Schema({
@@ -12,7 +12,7 @@ interface ImagesAttrs {
   imagePath: string;
 }
 
-interface ProjectsAttrs {
+interface ProjectAttrs {
   title: string;
   type: string;
   desc: string;
@@ -27,7 +27,7 @@ interface ProjectsAttrs {
   images: [ImagesAttrs];
 }
 
-interface ProjectsDoc extends mongoose.Document {
+interface ProjectDoc extends mongoose.Document {
   title: string;
   type: string;
   desc: string;
@@ -42,7 +42,7 @@ interface ProjectsDoc extends mongoose.Document {
   images: [ImagesAttrs];
 }
 
-const ProjectsSchema = new mongoose.Schema(
+const ProjectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     type: { type: String, required: true },
@@ -68,13 +68,13 @@ const ProjectsSchema = new mongoose.Schema(
   },
 );
 
-ProjectsSchema.statics.build = (attrs: ProjectsAttrs) => {
-  return new Projects(attrs);
+ProjectSchema.statics.build = (attrs: ProjectAttrs) => {
+  return new Project(attrs);
 };
 
-const Projects = mongoose.model<ProjectsDoc, ProjectsModel>(
-  'Projects',
-  ProjectsSchema,
+const Project = mongoose.model<ProjectDoc, ProjectModel>(
+  'Project',
+  ProjectSchema,
 );
 
-export { Projects };
+export { Project, ProjectAttrs, ProjectDoc, ProjectModel };

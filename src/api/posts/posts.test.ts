@@ -1,7 +1,7 @@
 import request from 'supertest';
 import faker from 'faker';
 import { app } from '../../app';
-import { Posts } from '../../models/posts';
+import { Posts } from './posts.model';
 
 const postComments = {
   from: faker.name.findName(),
@@ -43,12 +43,9 @@ it('return especific post', async () => {
   return expect(result.body.id.toString()).toEqual(post._id.toString());
 });
 
-it('return 422 when especific post its not found', async () => {
-  const post = postBuild();
-  await post.save();
-  const result = await request(app)
-    .get(`/api/posts/${1}`)
+it('return 400 when especific post its not found', async () => {
+  return request(app)
+    .get(`/api/posts/580a80d2dcba0f490c7298b4`)
     .set('Cookie', global.signin())
-    .expect(400);
-  expect(result.body.errors[0].message).toEqual('I cant find this post id');
+    .expect(404);
 });
