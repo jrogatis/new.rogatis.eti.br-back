@@ -2,7 +2,6 @@ import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
 import { currentUserRouter } from './routes/users/current-user';
-import { postsRouter } from './routes/posts';
 // import { projectsRouter } from './routes/projects';
 import {
   NotFoundError,
@@ -29,7 +28,6 @@ app.use(
 
 app.use(currentUser);
 app.use(currentUserRouter);
-app.use(postsRouter);
 // app.use(projectRouter);
 // app.use(projectsRouter);
 app.use(signinRouter);

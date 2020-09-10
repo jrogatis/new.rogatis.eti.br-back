@@ -1,6 +1,7 @@
-import jsonpatch from 'fast-json-patch';
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { applyPatch } from 'fast-json-patch';
 import { Request, Response } from 'express';
-import { ProjectModel } from '../projects/projects.model';
 
 const respondWithResult = (res: Response, statusCode = 200) => (
   entity: any,
@@ -9,8 +10,30 @@ const respondWithResult = (res: Response, statusCode = 200) => (
   return null;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const patchEntity = async (req: Request, res: Response, Entity: any) => {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  try {
+    const result = await Entity.findById(req.params.id);
+    handleEntityNotFound(res)(result);
+    const patched = await patchUpdates(req.body)(result);
+    respondWithResult(res)(patched);
+  } catch (err) {
+    handleError(res)(err);
+  }
+};
+
+const patchUpdates = (patches: any) => (entity: any) => {
+  try {
+    applyPatch(entity, patches, /*validate*/ true);
+  } catch (err) {
+    console.error('ERROR at patchUpdates', err);
+    return Promise.reject(err);
+  }
+  return entity.save();
+};
+
 const handleError = (res: Response, statusCode = 500) => (err: unknown) => {
   res.status(statusCode).send(err);
 };
@@ -34,7 +57,7 @@ const removeEntity = (res: Response) => (entity: any) => {
 const destroyEntity = async (
   req: Request,
   res: Response,
-  Entity: ProjectModel,
+  Entity: any,
 ): Promise<void> => {
   try {
     const result = await Entity.findById(req.params.id);
@@ -48,7 +71,7 @@ const destroyEntity = async (
 const showEntitySlug = async (
   req: Request,
   res: Response,
-  Entity: ProjectModel,
+  Entity: any,
 ): Promise<void> => {
   try {
     const result = await Entity.findById(req.params.id);
@@ -67,6 +90,25 @@ const createEntity = async (req: Request, res: Response, Entity: any) => {
     handleError(res)(err);
   }
 };
+const upsertEntity = async (req: Request, res: Response, Entity: any) => {
+  if (req.body._id) delete req.body._id;
+  try {
+    const result = await Entity.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      {
+        upsert: true,
+        setDefaultsOnInsert: true,
+        runValidators: true,
+        useFindAndModify: false,
+      },
+    );
+    respondWithResult(res)(result);
+  } catch (err) {
+    console.log({ err });
+    handleError(res)(err);
+  }
+};
 
 export {
   respondWithResult,
@@ -77,7 +119,7 @@ export {
   destroyEntity,
   showEntitySlug,
   createEntity,
-  /* patchEntity,
-  showEntity,
-  upsertEntity,*/
+  patchEntity,
+  upsertEntity,
+  /*showEntity*/
 };

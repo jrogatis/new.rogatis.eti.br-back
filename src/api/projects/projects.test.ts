@@ -1,14 +1,14 @@
 import request from 'supertest';
 import faker from 'faker';
 import { app } from '../../app';
-import { Projects } from '../../models/projects';
+import { Project } from './projects.model';
 
 const postImages = {
   imagePath: faker.internet.url(),
 };
 
 const projectToBuild = () =>
-  Projects.build({
+  Project.build({
     title: faker.name.findName(),
     type: faker.lorem.slug(),
     desc: faker.lorem.slug(),
@@ -53,4 +53,51 @@ it('creates a project and return it with 201', async () => {
     .set('Cookie', global.signin())
     .send({ ...project })
     .expect(201);
+});
+
+it('denied a project creation without proper authorization and return 401', async () => {
+  const project = projectToBuild().toJSON();
+  await request(app)
+    .post(`/api/projects`)
+    .send({ ...project })
+    .expect(401);
+});
+
+it('delete a existing project', async () => {
+  const project = projectToBuild();
+  const result = await project.save();
+  await request(app)
+    .delete(`/api/projects/${result._id}`)
+    .set('Cookie', global.signin())
+    .expect(204);
+  const check = await Project.findById(result._id);
+  return expect(check).toBe(null);
+});
+
+it('patch a existing project', async () => {
+  const project = projectToBuild();
+  const result = await project.save();
+
+  await request(app)
+    .patch(`/api/projects/${result._id}`)
+    .set('Cookie', global.signin())
+    .send([{ op: 'replace', path: '/title', value: 'TESTE' }])
+    .expect(200);
+
+  const check = await Project.findById(result._id);
+  return expect(check?.title).toBe('TESTE');
+});
+
+it('upsert a existing project', async () => {
+  const project = projectToBuild();
+  const result = await project.save();
+
+  await request(app)
+    .put(`/api/projects/${result._id}`)
+    .set('Cookie', global.signin())
+    .send({ title: 'TESTE' })
+    .expect(200);
+
+  const check = await Project.findById(result._id);
+  return expect(check?.title).toBe('TESTE');
 });
