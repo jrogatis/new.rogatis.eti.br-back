@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../../app';
+import { app } from '../../../app';
 
 it('return a 201 on sucessful signup', async () => {
   const result = await request(app)

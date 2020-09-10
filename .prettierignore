@@ -3,3 +3,4 @@ coverage
 .eslintignore
 .prettierignore
 .DS_Store
+.env
