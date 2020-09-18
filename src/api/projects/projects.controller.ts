@@ -28,6 +28,14 @@ const index = async (req: Request, res: Response): Promise<void> => {
     handleError(res)(err);
   }
 };
+const indexFrontPage = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const list = await Project.find({ displayFront: true }).exec();
+    respondWithResult(res)(list);
+  } catch (err) {
+    handleError(res)(err);
+  }
+};
 
 // Gets a single Project from the DB from id or from slug...
 const show = (req: Request, res: Response): Promise<void> =>
@@ -46,4 +54,4 @@ const patch = (req: Request, res: Response) => patchEntity(req, res, Project);
 const destroy = (req: Request, res: Response): Promise<void> =>
   destroyEntity(req, res, Project);
 
-export { index, destroy, show, create, patch, upsert };
+export { index, indexFrontPage, destroy, show, create, patch, upsert };
