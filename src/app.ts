@@ -1,6 +1,7 @@
 import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
+import cors from 'cors';
 
 import {
   NotFoundError,
@@ -14,6 +15,7 @@ import routes from './routes';
 const app = express();
 app.set('trust proxy', true);
 
+app.use(cors());
 app.use(json());
 app.use(
   cookieSession({
