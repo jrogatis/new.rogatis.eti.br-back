@@ -7,14 +7,14 @@ const postImages = {
   imagePath: faker.internet.url(),
 };
 
-const projectToBuild = () =>
+const projectToBuild = (displayFront?: boolean) =>
   Project.build({
     title: faker.name.findName(),
     type: faker.lorem.slug(),
     desc: faker.lorem.slug(),
     imgUrl: faker.internet.url(),
     siteUrl: faker.internet.url(),
-    displayFront: faker.random.boolean(),
+    displayFront: displayFront || faker.random.boolean(),
     hasDesc: faker.random.boolean(),
     slug: faker.lorem.slug(),
     text: faker.lorem.lines(5),
@@ -100,4 +100,15 @@ it('upsert a existing project', async () => {
 
   const check = await Project.findById(result._id);
   return expect(check?.title).toBe('TESTE');
+});
+
+it('return onnly projects with displayFront: true', async () => {
+  for (let i = 0; i < 4; i++) {
+    const project = projectToBuild(i % 2 === 0);
+    await project.save();
+  }
+  const result = await request(app).get(`/api/projects/frontpage`);
+  result.body.forEach((element: unknown) => {
+    expect(element).toMatchObject({ displayFront: true });
+  });
 });
