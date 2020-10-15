@@ -7,7 +7,7 @@ const router = (app: Application): void => {
   app.use('/api/projects', projectRouter);
   app.use('/api/posts', postsRouter);
   app.use('/api/users', usersRouter);
-  app.use('/api/imageGallery', imageGalleryRouter);
+  app.use('/api/imagegallery', imageGalleryRouter);
 };
 
 export default router;
